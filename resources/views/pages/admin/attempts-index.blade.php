@@ -9,6 +9,8 @@ use Livewire\Attributes\Url;
 new #[Layout('components.layouts.app')] class extends Component {
     use WithPagination;
 
+    private const ALLOWED_SORT_COLUMNS = ['candidate_name', 'status', 'started_at', 'completed_at'];
+
     #[Url]
     public string $search = '';
 
@@ -33,6 +35,10 @@ new #[Layout('components.layouts.app')] class extends Component {
 
     public function sort(string $column): void
     {
+        if (! in_array($column, self::ALLOWED_SORT_COLUMNS, true)) {
+            return;
+        }
+
         if ($this->sortBy === $column) {
             $this->sortDir = $this->sortDir === 'asc' ? 'desc' : 'asc';
         } else {
@@ -46,17 +52,21 @@ new #[Layout('components.layouts.app')] class extends Component {
         $query = Attempt::query();
 
         if ($this->search) {
-            $query->where(function ($q) {
-                $q->where('candidate_name', 'like', "%{$this->search}%")
-                  ->orWhere('candidate_email', 'like', "%{$this->search}%");
+            $escapedSearch = str_replace(['%', '_'], ['\%', '\_'], $this->search);
+            $query->where(function ($q) use ($escapedSearch) {
+                $q->where('candidate_name', 'like', "%{$escapedSearch}%")
+                  ->orWhere('candidate_email', 'like', "%{$escapedSearch}%");
             });
         }
 
-        if ($this->status) {
+        if ($this->status && in_array($this->status, ['in_progress', 'submitted'], true)) {
             $query->where('status', $this->status);
         }
 
-        $query->orderBy($this->sortBy, $this->sortDir);
+        // Validate sort parameters
+        $sortColumn = in_array($this->sortBy, self::ALLOWED_SORT_COLUMNS, true) ? $this->sortBy : 'started_at';
+        $sortDirection = in_array($this->sortDir, ['asc', 'desc'], true) ? $this->sortDir : 'desc';
+        $query->orderBy($sortColumn, $sortDirection);
 
         return [
             'attempts' => $query->paginate(20),

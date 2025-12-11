@@ -43,8 +43,17 @@ new #[Layout('components.layouts.app')] class extends Component {
 
         $now = now();
 
+        // Get valid question keys from config
+        $validKeys = collect(config('assessment.sections'))
+            ->flatMap(fn ($section) => collect($section['questions'])->pluck('key'))
+            ->toArray();
+
         $rows = [];
         foreach ($this->answers as $key => $value) {
+            // Only save answers for valid question keys
+            if (! in_array($key, $validKeys, true)) {
+                continue;
+            }
             $rows[] = [
                 'attempt_id' => $this->attempt->id,
                 'question_key' => $key,
@@ -54,11 +63,13 @@ new #[Layout('components.layouts.app')] class extends Component {
             ];
         }
 
-        Answer::upsert(
-            $rows,
-            ['attempt_id', 'question_key'],
-            ['answer_value', 'updated_at']
-        );
+        if (! empty($rows)) {
+            Answer::upsert(
+                $rows,
+                ['attempt_id', 'question_key'],
+                ['answer_value', 'updated_at']
+            );
+        }
 
         // Check for multi-tab warning
         $this->showMultiTabWarning = false;
@@ -274,7 +285,7 @@ new #[Layout('components.layouts.app')] class extends Component {
                                 </flux:label>
                                 <flux:text size="sm" class="mt-2 rounded-md bg-zinc-50 dark:bg-zinc-800 p-3 whitespace-pre-wrap">{{ $question['prompt'] }}</flux:text>
                                 <flux:textarea
-                                    wire:model.defer="answers.{{ $question['key'] }}"
+                                    wire:model="answers.{{ $question['key'] }}"
                                     rows="{{ $question['rows'] ?? 8 }}"
                                     placeholder="Write your answer here..."
                                     :disabled="$attempt->isSubmitted()"

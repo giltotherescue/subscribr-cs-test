@@ -55,12 +55,12 @@ new #[Layout('components.layouts.app')] class extends Component {
             <flux:separator />
             <div class="flex justify-between">
                 <flux:text class="text-zinc-500 dark:text-zinc-400">Started</flux:text>
-                <flux:text class="font-medium">{{ $attempt->started_at->format('M j, Y g:i A') }}</flux:text>
+                <flux:text class="font-medium">{{ $attempt->started_at?->format('M j, Y g:i A') ?? '-' }}</flux:text>
             </div>
             <flux:separator />
             <div class="flex justify-between">
                 <flux:text class="text-zinc-500 dark:text-zinc-400">Completed</flux:text>
-                <flux:text class="font-medium">{{ $attempt->completed_at->format('M j, Y g:i A') }}</flux:text>
+                <flux:text class="font-medium">{{ $attempt->completed_at?->format('M j, Y g:i A') ?? '-' }}</flux:text>
             </div>
             <flux:separator />
             <div class="flex justify-between">

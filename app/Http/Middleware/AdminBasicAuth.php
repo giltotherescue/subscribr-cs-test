@@ -22,7 +22,11 @@ class AdminBasicAuth
             abort(500, 'Admin credentials not configured');
         }
 
-        if ($request->getUser() !== $username || $request->getPassword() !== $password) {
+        // Use hash_equals to prevent timing attacks
+        $userMatches = hash_equals($username, $request->getUser() ?? '');
+        $passMatches = hash_equals($password, $request->getPassword() ?? '');
+
+        if (! $userMatches || ! $passMatches) {
             return response('Unauthorized', 401, [
                 'WWW-Authenticate' => 'Basic realm="Admin Area"',
             ]);
