@@ -29,43 +29,84 @@ new #[Layout('components.layouts.app')] class extends Component {
     }
 }; ?>
 
-<div class="space-y-8">
-    <div class="text-center">
-        <flux:heading size="xl" level="1">Subscribr — Customer Support Lead Assessment</flux:heading>
+<div class="max-w-xl mx-auto">
+    {{-- Header --}}
+    <header class="text-center mb-10">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary-200 bg-primary-50 text-primary-700 text-xs font-medium tracking-wide uppercase mb-4">
+            Subscribr Assessment
+        </div>
+        <h1 class="font-display font-bold text-3xl sm:text-4xl text-sand-900 leading-tight">
+            Customer Support Lead<br>
+            <span class="text-primary-500">Assessment</span>
+        </h1>
+    </header>
+
+    {{-- Instructions --}}
+    <div class="assessment-card p-8 mb-8">
+        <p class="text-sand-700 text-lg leading-relaxed mb-6">
+            Thanks for taking the time to complete this assessment.
+        </p>
+
+        <ul class="space-y-4">
+            <li class="flex items-start gap-3">
+                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-sm font-medium mt-0.5">1</span>
+                <span class="text-sand-700">Expected time: <strong class="text-sand-900">60–75 minutes</strong></span>
+            </li>
+            <li class="flex items-start gap-3">
+                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-sm font-medium mt-0.5">2</span>
+                <span class="text-sand-700">Please complete in <strong class="text-sand-900">one sitting</strong> if possible</span>
+            </li>
+            <li class="flex items-start gap-3">
+                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-sm font-medium mt-0.5">3</span>
+                <span class="text-sand-700">You may reference the <a href="https://subscribr.ai/help" target="_blank" rel="noopener" class="text-primary-600 hover:text-primary-700 underline underline-offset-2 font-medium">Subscribr Help Center</a></span>
+            </li>
+            <li class="flex items-start gap-3">
+                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-sm font-medium mt-0.5">4</span>
+                <span class="text-sand-700">AI tools are fine for research, but all <strong class="text-sand-900">writing should be your own</strong></span>
+            </li>
+        </ul>
+
+        <p class="text-sand-500 text-sm mt-6 pt-6 border-t border-sand-200">
+            Your work saves automatically. You can bookmark your link to resume later.
+        </p>
     </div>
 
-    <x-card>
-        <div class="prose prose-zinc dark:prose-invert max-w-none">
-            <p>Thanks for taking the time to complete this assessment.</p>
-            <ul>
-                <li>Expected time: <strong>60–75 minutes</strong></li>
-                <li>Please do this in <strong>one sitting if possible</strong></li>
-                <li>You may reference the Subscribr Help Center: <a href="https://subscribr.ai/help" target="_blank" rel="noopener">https://subscribr.ai/help</a></li>
-                <li>You may use AI tools (ChatGPT, Claude, etc.) and web search as you normally would</li>
-                <li>Please do not paste AI output directly without editing — we want to see your thinking</li>
-            </ul>
-            <p>Enter your name and email to begin. You'll receive a private link you can use to resume later.</p>
-        </div>
-    </x-card>
+    {{-- Form --}}
+    <div class="assessment-card p-8">
+        <form wire:submit="start" class="space-y-5">
+            <div>
+                <label for="name" class="question-label block mb-2">Full name</label>
+                <input
+                    type="text"
+                    id="name"
+                    wire:model="name"
+                    placeholder="Your full name"
+                    class="answer-textarea !min-h-0 !py-3"
+                    required
+                />
+                @error('name')
+                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
 
-    <x-card>
-        <form wire:submit="start" class="space-y-6">
-            <flux:input
-                wire:model="name"
-                label="Full name"
-                placeholder="Your full name"
-            />
+            <div>
+                <label for="email" class="question-label block mb-2">Email address</label>
+                <input
+                    type="email"
+                    id="email"
+                    wire:model="email"
+                    placeholder="you@example.com"
+                    class="answer-textarea !min-h-0 !py-3"
+                    required
+                />
+                @error('email')
+                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
 
-            <flux:input
-                wire:model="email"
-                type="email"
-                label="Email address"
-                placeholder="you@example.com"
-            />
-
-            <flux:button type="submit" variant="primary" class="w-full">
-                Start assessment
-            </flux:button>
+            <button type="submit" class="submit-button w-full mt-2">
+                Start Assessment
+            </button>
         </form>
-    </x-card>
+    </div>
 </div>

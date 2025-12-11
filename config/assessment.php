@@ -57,7 +57,7 @@ PROMPT,
                     'prompt' => <<<'PROMPT'
 A user reports:
 
-"When I try to upload research I get a message saying Research Limit Exceeded. My file only has about 9,500 words and my plan says I can have 50,000 words of research. Why is this happening and how do I fix it?"
+"When I try to upload a PDF for research I get an error message. Why doesn't it work?"
 
 Describe how you would diagnose and resolve this issue.
 PROMPT,
@@ -89,28 +89,66 @@ PROMPT,
                     'key' => 's3_q3a_explain_log',
                     'title' => '3A. Explain what happened',
                     'prompt' => <<<'PROMPT'
-You are given this log excerpt from a script generation job:
+A user reports: "My script started generating but got stuck around halfway. The loading spinner just keeps spinning."
 
-[2025-12-02 14:53:09] production.ERROR:
-OpenAI API Error: RateLimitExceededException
-Model: gpt-5-large
-Job: GenerateScript
-User ID: 29193
-Script length requested: 3000 words
-Queue: high
-Trace: ScriptJobHandler.php:83
+You check the logs and find this sequence of events:
 
-In your own words, explain what this log is telling you and what probably happened when the user tried to generate their script.
+[14:53:09] INFO: Script generation started
+  script_id: 12847
+  run_id: 550e8400-e29b-41d4
+  target_words: 2400
+  status: running
+
+[14:53:42] INFO: Section completed
+  section: batch_1
+  words_generated: 487
+  total_words: 487
+
+[14:54:18] INFO: Section completed
+  section: batch_2
+  words_generated: 512
+  total_words: 999
+
+[14:54:51] WARNING: Section generation failed
+  section: batch_3
+  attempt: 1
+  error: "cURL error 28: Operation timed out after 30000 milliseconds"
+
+[14:54:53] INFO: Retrying section
+  section: batch_3
+  attempt: 2
+
+[14:55:26] WARNING: Section generation failed
+  section: batch_3
+  attempt: 2
+  error: "cURL error 28: Operation timed out after 30000 milliseconds"
+
+[14:55:26] ERROR: Section max retries exceeded
+  section: batch_3
+  total_attempts: 2
+  status: failed
+
+[14:55:26] ERROR: Script generation failed
+  script_id: 12847
+  error: "Section generation failed after 2 attempts"
+
+In your own words, explain what these logs are telling you. What happened during the script generation, and why did it fail?
 PROMPT,
                     'required' => true,
-                    'rows' => 8,
+                    'rows' => 10,
                 ],
                 [
                     'key' => 's3_q3b_next_steps',
                     'title' => '3B. Next steps',
-                    'prompt' => 'What would you do next to investigate and resolve this?',
+                    'prompt' => <<<'PROMPT'
+Based on the logs above:
+
+1. What would you tell the user about what happened?
+2. What would you suggest they try?
+3. Is there anything you would escalate or flag internally?
+PROMPT,
                     'required' => true,
-                    'rows' => 8,
+                    'rows' => 10,
                 ],
             ],
         ],

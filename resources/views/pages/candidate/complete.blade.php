@@ -31,48 +31,46 @@ new #[Layout('components.layouts.app')] class extends Component {
     }
 }; ?>
 
-<div class="space-y-8">
-    <div class="text-center">
-        <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-lime-100 dark:bg-lime-900">
-            <flux:icon.check class="size-8 text-lime-600 dark:text-lime-400" />
+<div class="max-w-xl mx-auto">
+    {{-- Success header --}}
+    <div class="text-center mb-10">
+        <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-green-100 mb-6">
+            <svg class="size-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+            </svg>
         </div>
-        <flux:heading size="xl" level="1" class="mt-4">You're done!</flux:heading>
-        <flux:text class="mt-2 text-lg">Thanks — your assessment has been submitted successfully.</flux:text>
+        <h1 class="section-title text-3xl">You're done!</h1>
+        <p class="mt-3 text-sand-600 text-lg">Your assessment has been submitted successfully.</p>
     </div>
 
-    <x-card>
-        <flux:heading>Submission Details</flux:heading>
-        <dl class="mt-4 space-y-3">
-            <div class="flex justify-between">
-                <flux:text class="text-zinc-500 dark:text-zinc-400">Candidate</flux:text>
-                <flux:text class="font-medium">{{ $attempt->candidate_name }}</flux:text>
+    {{-- Submission details --}}
+    <div class="assessment-card p-8">
+        <h2 class="question-label text-lg mb-4">Submission Details</h2>
+        <dl class="space-y-0 divide-y divide-sand-200">
+            <div class="flex justify-between py-3">
+                <dt class="text-sand-500">Candidate</dt>
+                <dd class="font-medium text-sand-900">{{ $attempt->candidate_name }}</dd>
             </div>
-            <flux:separator />
-            <div class="flex justify-between">
-                <flux:text class="text-zinc-500 dark:text-zinc-400">Email</flux:text>
-                <flux:text class="font-medium">{{ $attempt->candidate_email }}</flux:text>
+            <div class="flex justify-between py-3">
+                <dt class="text-sand-500">Email</dt>
+                <dd class="font-medium text-sand-900">{{ $attempt->candidate_email }}</dd>
             </div>
-            <flux:separator />
-            <div class="flex justify-between">
-                <flux:text class="text-zinc-500 dark:text-zinc-400">Started</flux:text>
-                <flux:text class="font-medium">{{ $attempt->started_at?->format('M j, Y g:i A') ?? '-' }}</flux:text>
+            <div class="flex justify-between py-3">
+                <dt class="text-sand-500">Started</dt>
+                <dd class="font-medium text-sand-900">{{ $attempt->started_at?->format('M j, Y g:i A') ?? '-' }}</dd>
             </div>
-            <flux:separator />
-            <div class="flex justify-between">
-                <flux:text class="text-zinc-500 dark:text-zinc-400">Completed</flux:text>
-                <flux:text class="font-medium">{{ $attempt->completed_at?->format('M j, Y g:i A') ?? '-' }}</flux:text>
+            <div class="flex justify-between py-3">
+                <dt class="text-sand-500">Completed</dt>
+                <dd class="font-medium text-sand-900">{{ $attempt->completed_at?->format('M j, Y g:i A') ?? '-' }}</dd>
             </div>
-            <flux:separator />
-            <div class="flex justify-between">
-                <flux:text class="text-zinc-500 dark:text-zinc-400">Duration</flux:text>
-                <flux:text class="font-medium">{{ $this->durationFormatted }}</flux:text>
+            <div class="flex justify-between py-3">
+                <dt class="text-sand-500">Duration</dt>
+                <dd class="font-semibold text-primary-600 font-mono">{{ $this->durationFormatted }}</dd>
             </div>
         </dl>
-    </x-card>
-
-    <div class="text-center">
-        <flux:text size="sm" class="text-zinc-500 dark:text-zinc-400">
-            You may close this tab.
-        </flux:text>
     </div>
+
+    <p class="text-center text-sm text-sand-500 mt-8">
+        You may close this tab. We'll be in touch soon.
+    </p>
 </div>

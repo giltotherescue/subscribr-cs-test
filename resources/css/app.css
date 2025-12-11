@@ -8,5 +8,301 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    /* Typography - Roboto Mono for headings (matches Subscribr site), Roboto for body */
+    --font-sans: 'Roboto', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Roboto Mono', ui-monospace, monospace;
+    --font-mono: 'Roboto Mono', ui-monospace, monospace;
+
+    /* Subscribr Brand - Warm coral palette */
+    --color-primary-50: #fef2f0;
+    --color-primary-100: #fce8e4;
+    --color-primary-200: #f9d0c8;
+    --color-primary-300: #f4aea0;
+    --color-primary-400: #eb7c68;
+    --color-primary-500: #dc4a2d;
+    --color-primary-600: #c73d22;
+    --color-primary-700: #a5311b;
+    --color-primary-800: #882b1b;
+    --color-primary-900: #71281c;
+
+    /* Warm neutrals */
+    --color-sand-50: #fdfcfb;
+    --color-sand-100: #f8f6f3;
+    --color-sand-200: #f0ece6;
+    --color-sand-300: #e4ddd3;
+    --color-sand-400: #c9bfb0;
+    --color-sand-500: #a89b8a;
+    --color-sand-600: #8a7d6d;
+    --color-sand-700: #6d6356;
+    --color-sand-800: #524a40;
+    --color-sand-900: #3d372f;
+}
+
+:root {
+    --color-accent: var(--color-primary-500);
+}
+
+/* Base styles */
+html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    background: linear-gradient(180deg, var(--color-sand-50) 0%, white 100%);
+    min-height: 100vh;
+}
+
+/* Elegant card styling */
+.assessment-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.04),
+        0 4px 16px rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--color-sand-200);
+}
+
+/* Section styling */
+.section-header {
+    position: relative;
+    padding-left: 3.5rem;
+}
+
+.section-number {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-primary-600) 100%);
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.125rem;
+    box-shadow: 0 2px 8px rgba(220, 74, 45, 0.25);
+}
+
+/* Question prompt - editorial quote style */
+.question-prompt {
+    position: relative;
+    background: var(--color-sand-50);
+    border-left: 3px solid var(--color-primary-400);
+    border-radius: 0 0.75rem 0.75rem 0;
+    padding: 1.25rem 1.5rem;
+    margin: 1rem 0 1.25rem;
+    font-family: var(--font-display);
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: var(--color-sand-800);
+    font-weight: 400;
+    font-style: normal;
+}
+
+.question-prompt::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -3px;
+    width: 3px;
+    height: 2rem;
+    background: var(--color-primary-500);
+    border-radius: 0 0 2px 2px;
+}
+
+/* Code within prompts */
+.question-prompt code,
+.question-prompt pre {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    background: var(--color-sand-200);
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    color: var(--color-sand-900);
+}
+
+.question-prompt pre {
+    display: block;
+    padding: 1rem;
+    margin: 1rem 0;
+    overflow-x: auto;
+    white-space: pre;
+    background: var(--color-sand-900);
+    color: var(--color-sand-100);
+    border-radius: 0.5rem;
+    border-left: none;
+}
+
+/* Textarea styling */
+.answer-textarea {
+    width: 100%;
+    border: 2px solid var(--color-sand-200);
+    border-radius: 0.75rem;
+    padding: 1rem 1.25rem;
+    font-size: 1rem;
+    line-height: 1.75;
+    color: var(--color-sand-900);
+    background: white;
+    transition: all 0.2s ease;
+    resize: vertical;
+    min-height: 160px;
+}
+
+.answer-textarea::placeholder {
+    color: var(--color-sand-400);
+}
+
+.answer-textarea:focus {
+    outline: none;
+    border-color: var(--color-primary-400);
+    box-shadow: 0 0 0 4px rgba(220, 74, 45, 0.1);
+}
+
+.answer-textarea:hover:not(:focus) {
+    border-color: var(--color-sand-300);
+}
+
+/* Question labels */
+.question-label {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 1.125rem;
+    color: var(--color-sand-900);
+    letter-spacing: -0.01em;
+}
+
+/* Section title - monospace like Subscribr site */
+.section-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.375rem;
+    color: var(--color-sand-900);
+    letter-spacing: 0;
+    line-height: 1.4;
+}
+
+/* Save status badge */
+.save-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+}
+
+.save-badge-saving {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.save-badge-saved {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.save-badge-error {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Submit button */
+.submit-button {
+    background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-primary-600) 100%);
+    color: white;
+    font-weight: 600;
+    padding: 0.875rem 2rem;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    letter-spacing: -0.01em;
+    transition: all 0.2s ease;
+    box-shadow:
+        0 2px 4px rgba(220, 74, 45, 0.2),
+        0 4px 12px rgba(220, 74, 45, 0.15);
+}
+
+.submit-button:hover {
+    transform: translateY(-1px);
+    box-shadow:
+        0 4px 8px rgba(220, 74, 45, 0.25),
+        0 8px 20px rgba(220, 74, 45, 0.2);
+}
+
+.submit-button:active {
+    transform: translateY(0);
+}
+
+/* Header card accent */
+.header-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.header-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-primary-400), var(--color-primary-500), var(--color-primary-400));
+}
+
+/* Question divider */
+.question-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-sand-200), transparent);
+    margin: 2.5rem 0;
+}
+
+/* Subtle animation for save indicator */
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.pulse-dot {
+    animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+/* Dark mode overrides */
+.dark body {
+    background: linear-gradient(180deg, #1a1917 0%, #0f0e0d 100%);
+}
+
+.dark .assessment-card {
+    background: #1f1e1c;
+    border-color: #2d2b28;
+}
+
+.dark .question-prompt {
+    background: #262422;
+    color: #e4ddd3;
+}
+
+.dark .answer-textarea {
+    background: #1a1917;
+    border-color: #2d2b28;
+    color: #f0ece6;
+}
+
+.dark .answer-textarea:focus {
+    border-color: var(--color-primary-400);
+}
+
+.dark .section-title,
+.dark .question-label {
+    color: #f0ece6;
+}
+
+/* Footer styling */
+.assessment-footer {
+    border-top: 1px solid var(--color-sand-200);
+    background: linear-gradient(180deg, white 0%, var(--color-sand-50) 100%);
 }

@@ -7,16 +7,26 @@
 
     <title>{{ $title ?? config('assessment.title') }}</title>
 
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=inter:400,500,600&display=swap" rel="stylesheet" />
+    {{-- Fonts: Roboto Mono for headings (matches Subscribr), Roboto for body --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @fluxAppearance
 </head>
-<body class="min-h-screen bg-zinc-50 text-zinc-900 antialiased dark:bg-zinc-900 dark:text-zinc-100">
-    <div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+<body class="min-h-screen antialiased">
+    <div class="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
         {{ $slot }}
     </div>
+
+    <footer class="assessment-footer mt-16 py-8">
+        <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-sm text-sand-500">
+                &copy; {{ date('Y') }} Subscribr
+            </p>
+        </div>
+    </footer>
 
     @fluxScripts
 </body>

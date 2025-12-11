@@ -162,11 +162,9 @@ new #[Layout('components.layouts.app')] class extends Component {
         dirty: false,
         lastSavedAt: @js($lastSavedAt),
         saveError: false,
-        elapsed: @js($this->elapsedSeconds),
         sessionId: localStorage.getItem('assessment_session_id') || null,
 
         generateUUID() {
-            // Fallback for non-HTTPS contexts where crypto.randomUUID is not available
             if (typeof crypto !== 'undefined' && crypto.randomUUID) {
                 return crypto.randomUUID();
             }
@@ -184,134 +182,146 @@ new #[Layout('components.layouts.app')] class extends Component {
             }
             $wire.setSessionId(this.sessionId);
 
-            setInterval(() => this.elapsed++, 1000);
-
             $wire.on('autosaved', (event) => {
                 this.lastSavedAt = event.at;
                 this.dirty = false;
                 this.saveError = false;
             });
-        },
-
-        formatDuration(seconds) {
-            const h = Math.floor(seconds / 3600);
-            const m = Math.floor((seconds % 3600) / 60);
-            const s = seconds % 60;
-            if (h > 0) {
-                return h + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
-            }
-            return m + ':' + String(s).padStart(2, '0');
-        },
-
-        formatSavedTime(iso) {
-            if (!iso) return 'Never';
-            const date = new Date(iso);
-            return date.toLocaleTimeString();
         }
     }"
     x-on:input="dirty = true"
     wire:poll.15s="autosave"
 >
     @if($attempt->isSubmitted())
-        <flux:callout variant="warning" icon="exclamation-triangle" class="mb-6">
-            <flux:callout.heading>Already submitted</flux:callout.heading>
-            <flux:callout.text>This assessment has already been submitted.</flux:callout.text>
-            <x-slot name="actions">
-                <flux:button href="{{ route('attempt.done', $attempt->token) }}" size="sm">View submission</flux:button>
-            </x-slot>
-        </flux:callout>
+        <div class="mb-8 assessment-card p-5 border-l-4 border-l-amber-400">
+            <div class="flex items-center gap-3">
+                <svg class="size-5 text-amber-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+                </svg>
+                <div class="flex-1">
+                    <p class="font-medium text-sand-800">This assessment has been submitted.</p>
+                </div>
+                <a href="{{ route('attempt.done', $attempt->token) }}" class="text-sm font-medium text-primary-600 hover:text-primary-700 underline underline-offset-2">
+                    View submission →
+                </a>
+            </div>
+        </div>
     @endif
 
-    {{-- Header / Status bar --}}
-    <div class="sticky top-0 z-10 mb-6">
-        <x-card class="!p-4">
-            <div class="flex flex-wrap items-center justify-between gap-4">
+    {{-- Header --}}
+    <header class="mb-10">
+        <div class="assessment-card header-card p-6">
+            <div class="flex flex-wrap items-start justify-between gap-4">
                 <div>
-                    <flux:heading size="lg">{{ config('assessment.title') }}</flux:heading>
-                    <flux:text size="sm">{{ $attempt->candidate_name }} &middot; {{ $attempt->candidate_email }}</flux:text>
+                    <h1 class="section-title text-2xl">{{ config('assessment.title') }}</h1>
+                    <p class="text-sand-600 mt-2">{{ $attempt->candidate_name }} · {{ $attempt->candidate_email }}</p>
                 </div>
-                <div class="flex items-center gap-6 text-sm">
-                    <div>
-                        <flux:text size="sm"><span class="font-medium">Time:</span> <span x-text="formatDuration(elapsed)"></span></flux:text>
-                    </div>
-                    <div>
-                        <flux:text size="sm"><span class="font-medium">Progress:</span> {{ $this->answeredCount }}/{{ $this->totalRequired }} required</flux:text>
-                    </div>
-                    <div>
-                        <template x-if="dirty">
-                            <flux:badge color="amber" size="sm">Saving soon...</flux:badge>
-                        </template>
-                        <template x-if="!dirty && !saveError">
-                            <flux:badge color="lime" size="sm">Saved <span x-text="formatSavedTime(lastSavedAt)"></span></flux:badge>
-                        </template>
-                        <template x-if="saveError">
-                            <flux:badge color="red" size="sm">Could not save</flux:badge>
-                        </template>
-                    </div>
+                <div>
+                    <template x-if="dirty">
+                        <span class="save-badge save-badge-saving">
+                            <span class="size-1.5 rounded-full bg-amber-500 pulse-dot"></span>
+                            Saving...
+                        </span>
+                    </template>
+                    <template x-if="!dirty && !saveError">
+                        <span class="save-badge save-badge-saved">
+                            <svg class="size-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                            Saved
+                        </span>
+                    </template>
+                    <template x-if="saveError">
+                        <span class="save-badge save-badge-error">
+                            Error saving
+                        </span>
+                    </template>
                 </div>
             </div>
 
             @if($showMultiTabWarning)
-                <flux:callout variant="warning" icon="exclamation-triangle" class="mt-3" size="sm">
-                    <flux:callout.text>This assessment is open in another tab. Changes may overwrite each other.</flux:callout.text>
-                </flux:callout>
+                <div class="mt-4 p-3 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-800">
+                    <strong>Warning:</strong> This assessment is open in another tab.
+                </div>
             @endif
 
-            <flux:text size="xs" class="mt-3">
-                <strong>Autosave is on.</strong> Your work saves automatically every ~15 seconds.
-                Keep this link to resume: <code class="rounded bg-zinc-100 dark:bg-zinc-800 px-1">{{ route('attempt', $attempt->token) }}</code>
-            </flux:text>
-        </x-card>
-    </div>
+            <p class="mt-4 text-sm text-sand-500">
+                Your work saves automatically. Bookmark this page if you need to take a break.
+            </p>
+        </div>
+    </header>
 
     {{-- Questions --}}
-    <form wire:submit="submit" class="space-y-8">
+    <form wire:submit="submit" class="space-y-10">
         @foreach(config('assessment.sections') as $sectionIndex => $section)
-            <x-card>
-                <flux:heading size="lg">{{ $section['title'] }}</flux:heading>
-                @if($section['description'])
-                    <flux:text class="mt-1">{{ $section['description'] }}</flux:text>
-                @endif
+            <section class="assessment-card p-8">
+                {{-- Section header --}}
+                <div class="section-header mb-8">
+                    <div class="section-number">{{ $sectionIndex + 1 }}</div>
+                    <h2 class="section-title">{{ preg_replace('/^\d+\.\s*/', '', $section['title']) }}</h2>
+                    @if($section['description'])
+                        <p class="text-sand-600 mt-2 text-base">{{ $section['description'] }}</p>
+                    @endif
+                </div>
 
-                <div class="mt-6 space-y-8">
-                    @foreach($section['questions'] as $question)
+                {{-- Questions in this section --}}
+                <div class="space-y-0">
+                    @foreach($section['questions'] as $questionIndex => $question)
                         <div wire:key="q-{{ $question['key'] }}">
-                            <flux:field>
-                                <flux:label>
-                                    {{ $question['title'] }}
-                                    @if($question['required'])
-                                        <flux:badge color="red" size="sm" class="ml-2">Required</flux:badge>
-                                    @endif
-                                </flux:label>
-                                <flux:text size="sm" class="mt-2 rounded-md bg-zinc-50 dark:bg-zinc-800 p-3 whitespace-pre-wrap">{{ $question['prompt'] }}</flux:text>
-                                <flux:textarea
-                                    wire:model="answers.{{ $question['key'] }}"
-                                    rows="{{ $question['rows'] ?? 8 }}"
-                                    placeholder="Write your answer here..."
-                                    :disabled="$attempt->isSubmitted()"
-                                    :invalid="isset($validationErrors[$question['key']])"
-                                />
-                                @if(isset($validationErrors[$question['key']]))
-                                    <flux:error>{{ $validationErrors[$question['key']] }}</flux:error>
-                                @endif
-                            </flux:field>
+                            @if($questionIndex > 0)
+                                <div class="question-divider"></div>
+                            @endif
+
+                            {{-- Question label --}}
+                            <label for="q-{{ $question['key'] }}" class="question-label block mb-1">
+                                {{ $question['title'] }}
+                            </label>
+
+                            {{-- Question prompt --}}
+                            <div class="question-prompt whitespace-pre-wrap">{{ $question['prompt'] }}</div>
+
+                            {{-- Answer textarea --}}
+                            <textarea
+                                id="q-{{ $question['key'] }}"
+                                wire:model="answers.{{ $question['key'] }}"
+                                rows="{{ $question['rows'] ?? 8 }}"
+                                placeholder="Write your answer here..."
+                                @if($attempt->isSubmitted()) disabled @endif
+                                class="answer-textarea @if(isset($validationErrors[$question['key']])) !border-red-400 @endif"
+                            ></textarea>
+
+                            @if(isset($validationErrors[$question['key']]))
+                                <p class="mt-2 text-sm text-red-600 font-medium">{{ $validationErrors[$question['key']] }}</p>
+                            @endif
                         </div>
                     @endforeach
                 </div>
-            </x-card>
+            </section>
         @endforeach
 
         @if(!$attempt->isSubmitted())
-            <x-card>
-                <div class="flex items-center justify-between">
-                    <flux:text size="sm">
-                        Make sure all required questions are answered before submitting.
-                    </flux:text>
-                    <flux:button type="submit" variant="primary">
-                        Submit assessment
-                    </flux:button>
-                </div>
-            </x-card>
+            <div class="assessment-card p-6 flex items-center justify-between gap-4">
+                <p class="text-sand-600">
+                    Ready to submit your assessment?
+                </p>
+                <button type="submit" class="submit-button">
+                    Submit Assessment
+                </button>
+            </div>
         @endif
     </form>
+
+    {{-- Floating help center callout --}}
+    <a
+        href="https://subscribr.ai/help"
+        target="_blank"
+        rel="noopener"
+        class="fixed top-4 right-4 flex items-center gap-2 rounded-lg bg-primary-500 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-primary-500/25 transition hover:bg-primary-600 hover:shadow-xl hover:shadow-primary-500/30"
+    >
+        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+        </svg>
+        Help Center
+        <svg class="size-3.5 opacity-70" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+        </svg>
+    </a>
 </div>
