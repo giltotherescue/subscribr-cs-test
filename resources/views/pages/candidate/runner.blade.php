@@ -154,9 +154,21 @@ new #[Layout('components.layouts.app')] class extends Component {
         elapsed: @js($this->elapsedSeconds),
         sessionId: localStorage.getItem('assessment_session_id') || null,
 
+        generateUUID() {
+            // Fallback for non-HTTPS contexts where crypto.randomUUID is not available
+            if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+                return crypto.randomUUID();
+            }
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        },
+
         init() {
             if (!this.sessionId) {
-                this.sessionId = crypto.randomUUID();
+                this.sessionId = this.generateUUID();
                 localStorage.setItem('assessment_session_id', this.sessionId);
             }
             $wire.setSessionId(this.sessionId);
@@ -201,7 +213,7 @@ new #[Layout('components.layouts.app')] class extends Component {
 
     {{-- Header / Status bar --}}
     <div class="sticky top-0 z-10 mb-6">
-        <flux:card class="!p-4">
+        <x-card class="!p-4">
             <div class="flex flex-wrap items-center justify-between gap-4">
                 <div>
                     <flux:heading size="lg">{{ config('assessment.title') }}</flux:heading>
@@ -236,15 +248,15 @@ new #[Layout('components.layouts.app')] class extends Component {
 
             <flux:text size="xs" class="mt-3">
                 <strong>Autosave is on.</strong> Your work saves automatically every ~15 seconds.
-                Keep this link to resume: <code class="rounded bg-zinc-100 dark:bg-zinc-800 px-1">{{ url()->current() }}</code>
+                Keep this link to resume: <code class="rounded bg-zinc-100 dark:bg-zinc-800 px-1">{{ route('attempt', $attempt->token) }}</code>
             </flux:text>
-        </flux:card>
+        </x-card>
     </div>
 
     {{-- Questions --}}
     <form wire:submit="submit" class="space-y-8">
         @foreach(config('assessment.sections') as $sectionIndex => $section)
-            <flux:card>
+            <x-card>
                 <flux:heading size="lg">{{ $section['title'] }}</flux:heading>
                 @if($section['description'])
                     <flux:text class="mt-1">{{ $section['description'] }}</flux:text>
@@ -275,11 +287,11 @@ new #[Layout('components.layouts.app')] class extends Component {
                         </div>
                     @endforeach
                 </div>
-            </flux:card>
+            </x-card>
         @endforeach
 
         @if(!$attempt->isSubmitted())
-            <flux:card>
+            <x-card>
                 <div class="flex items-center justify-between">
                     <flux:text size="sm">
                         Make sure all required questions are answered before submitting.
@@ -288,7 +300,7 @@ new #[Layout('components.layouts.app')] class extends Component {
                         Submit assessment
                     </flux:button>
                 </div>
-            </flux:card>
+            </x-card>
         @endif
     </form>
 </div>

@@ -78,7 +78,7 @@ new #[Layout('components.layouts.app')] class extends Component {
     </div>
 
     {{-- Metadata card --}}
-    <flux:card>
+    <x-card>
         <flux:heading>Submission Details</flux:heading>
         <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-6">
             <div>
@@ -104,10 +104,10 @@ new #[Layout('components.layouts.app')] class extends Component {
                 <flux:text class="mt-1 font-medium">{{ $this->durationFormatted }}</flux:text>
             </div>
         </div>
-    </flux:card>
+    </x-card>
 
     {{-- Admin notes --}}
-    <flux:card>
+    <x-card>
         <flux:heading>Admin Notes</flux:heading>
         <div class="mt-4">
             <flux:textarea
@@ -122,11 +122,11 @@ new #[Layout('components.layouts.app')] class extends Component {
                 </flux:button>
             </div>
         </div>
-    </flux:card>
+    </x-card>
 
     {{-- Answers by section --}}
     @foreach(config('assessment.sections') as $section)
-        <flux:card>
+        <x-card>
             <flux:heading size="lg">{{ $section['title'] }}</flux:heading>
             @if($section['description'])
                 <flux:text class="mt-1">{{ $section['description'] }}</flux:text>
@@ -148,6 +148,6 @@ new #[Layout('components.layouts.app')] class extends Component {
                     </div>
                 @endforeach
             </div>
-        </flux:card>
+        </x-card>
     @endforeach
 </div>

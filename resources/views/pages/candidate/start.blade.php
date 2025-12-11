@@ -9,7 +9,7 @@ new #[Layout('components.layouts.app')] class extends Component {
     #[Validate('required|string|max:200')]
     public string $name = '';
 
-    #[Validate('required|email:rfc,dns|max:254')]
+    #[Validate('required|email|max:254')]
     public string $email = '';
 
     public function start(): void
@@ -34,7 +34,7 @@ new #[Layout('components.layouts.app')] class extends Component {
         <flux:heading size="xl" level="1">Subscribr — Customer Support Lead Assessment</flux:heading>
     </div>
 
-    <flux:card>
+    <x-card>
         <div class="prose prose-zinc dark:prose-invert max-w-none">
             <p>Thanks for taking the time to complete this assessment.</p>
             <ul>
@@ -46,9 +46,9 @@ new #[Layout('components.layouts.app')] class extends Component {
             </ul>
             <p>Enter your name and email to begin. You'll receive a private link you can use to resume later.</p>
         </div>
-    </flux:card>
+    </x-card>
 
-    <flux:card>
+    <x-card>
         <form wire:submit="start" class="space-y-6">
             <flux:input
                 wire:model="name"
@@ -67,5 +67,5 @@ new #[Layout('components.layouts.app')] class extends Component {
                 Start assessment
             </flux:button>
         </form>
-    </flux:card>
+    </x-card>
 </div>

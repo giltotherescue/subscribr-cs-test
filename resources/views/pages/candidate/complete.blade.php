@@ -40,7 +40,7 @@ new #[Layout('components.layouts.app')] class extends Component {
         <flux:text class="mt-2 text-lg">Thanks — your assessment has been submitted successfully.</flux:text>
     </div>
 
-    <flux:card>
+    <x-card>
         <flux:heading>Submission Details</flux:heading>
         <dl class="mt-4 space-y-3">
             <div class="flex justify-between">
@@ -68,7 +68,7 @@ new #[Layout('components.layouts.app')] class extends Component {
                 <flux:text class="font-medium">{{ $this->durationFormatted }}</flux:text>
             </div>
         </dl>
-    </flux:card>
+    </x-card>
 
     <div class="text-center">
         <flux:text size="sm" class="text-zinc-500 dark:text-zinc-400">

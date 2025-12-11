@@ -80,7 +80,7 @@ new #[Layout('components.layouts.app')] class extends Component {
         </flux:button>
     </div>
 
-    <flux:card>
+    <x-card>
         <div class="flex flex-wrap items-center gap-4 mb-6">
             <div class="flex-1 min-w-[200px]">
                 <flux:input
@@ -98,83 +98,93 @@ new #[Layout('components.layouts.app')] class extends Component {
 
         @if($attempts->isEmpty())
             <div class="text-center py-12">
-                <flux:icon.inbox class="mx-auto size-12 text-zinc-400" />
+                <svg class="mx-auto size-12 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 13.5h3.86a2.25 2.25 0 0 1 2.012 1.244l.256.512a2.25 2.25 0 0 0 2.013 1.244h3.218a2.25 2.25 0 0 0 2.013-1.244l.256-.512a2.25 2.25 0 0 1 2.013-1.244h3.859m-19.5.338V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H6.911a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661Z" />
+                </svg>
                 <flux:heading class="mt-4">No attempts yet</flux:heading>
                 <flux:text class="mt-2">Attempts will appear here when candidates start the assessment.</flux:text>
             </div>
         @else
-            <flux:table>
-                <flux:table.columns>
-                    <flux:table.column wire:click="sort('candidate_name')" class="cursor-pointer">
-                        Name
-                        @if($sortBy === 'candidate_name')
-                            <flux:icon.chevron-{{ $sortDir === 'asc' ? 'up' : 'down' }} variant="micro" class="inline" />
-                        @endif
-                    </flux:table.column>
-                    <flux:table.column>Email</flux:table.column>
-                    <flux:table.column wire:click="sort('status')" class="cursor-pointer">
-                        Status
-                        @if($sortBy === 'status')
-                            <flux:icon.chevron-{{ $sortDir === 'asc' ? 'up' : 'down' }} variant="micro" class="inline" />
-                        @endif
-                    </flux:table.column>
-                    <flux:table.column wire:click="sort('started_at')" class="cursor-pointer">
-                        Started
-                        @if($sortBy === 'started_at')
-                            <flux:icon.chevron-{{ $sortDir === 'asc' ? 'up' : 'down' }} variant="micro" class="inline" />
-                        @endif
-                    </flux:table.column>
-                    <flux:table.column wire:click="sort('completed_at')" class="cursor-pointer">
-                        Completed
-                        @if($sortBy === 'completed_at')
-                            <flux:icon.chevron-{{ $sortDir === 'asc' ? 'up' : 'down' }} variant="micro" class="inline" />
-                        @endif
-                    </flux:table.column>
-                    <flux:table.column>Duration</flux:table.column>
-                    <flux:table.column>Reviewed</flux:table.column>
-                    <flux:table.column></flux:table.column>
-                </flux:table.columns>
-                <flux:table.rows>
-                    @foreach($attempts as $attempt)
-                        <flux:table.row wire:key="attempt-{{ $attempt->id }}">
-                            <flux:table.cell class="font-medium">{{ $attempt->candidate_name }}</flux:table.cell>
-                            <flux:table.cell>{{ $attempt->candidate_email }}</flux:table.cell>
-                            <flux:table.cell>
-                                @if($attempt->status === 'submitted')
-                                    <flux:badge color="lime" size="sm">Submitted</flux:badge>
-                                @else
-                                    <flux:badge color="amber" size="sm">In Progress</flux:badge>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
+                    <thead>
+                        <tr class="text-left text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                            <th wire:click="sort('candidate_name')" class="px-3 py-3 cursor-pointer hover:text-zinc-700 dark:hover:text-zinc-200">
+                                Name
+                                @if($sortBy === 'candidate_name')
+                                    <span class="ml-1">{{ $sortDir === 'asc' ? '↑' : '↓' }}</span>
                                 @endif
-                            </flux:table.cell>
-                            <flux:table.cell>{{ $attempt->started_at?->format('M j, g:i A') }}</flux:table.cell>
-                            <flux:table.cell>{{ $attempt->completed_at?->format('M j, g:i A') ?? '-' }}</flux:table.cell>
-                            <flux:table.cell>
-                                @if($attempt->duration_seconds)
-                                    {{ floor($attempt->duration_seconds / 60) }}m {{ $attempt->duration_seconds % 60 }}s
-                                @else
-                                    -
+                            </th>
+                            <th class="px-3 py-3">Email</th>
+                            <th wire:click="sort('status')" class="px-3 py-3 cursor-pointer hover:text-zinc-700 dark:hover:text-zinc-200">
+                                Status
+                                @if($sortBy === 'status')
+                                    <span class="ml-1">{{ $sortDir === 'asc' ? '↑' : '↓' }}</span>
                                 @endif
-                            </flux:table.cell>
-                            <flux:table.cell>
-                                @if($attempt->reviewed_at)
-                                    <flux:icon.check-circle class="size-5 text-lime-600" />
-                                @else
-                                    <flux:icon.minus-circle class="size-5 text-zinc-300" />
+                            </th>
+                            <th wire:click="sort('started_at')" class="px-3 py-3 cursor-pointer hover:text-zinc-700 dark:hover:text-zinc-200">
+                                Started
+                                @if($sortBy === 'started_at')
+                                    <span class="ml-1">{{ $sortDir === 'asc' ? '↑' : '↓' }}</span>
                                 @endif
-                            </flux:table.cell>
-                            <flux:table.cell>
-                                <flux:button href="{{ route('admin.attempts.show', $attempt) }}" size="sm" variant="ghost" icon="eye">
-                                    View
-                                </flux:button>
-                            </flux:table.cell>
-                        </flux:table.row>
-                    @endforeach
-                </flux:table.rows>
-            </flux:table>
+                            </th>
+                            <th wire:click="sort('completed_at')" class="px-3 py-3 cursor-pointer hover:text-zinc-700 dark:hover:text-zinc-200">
+                                Completed
+                                @if($sortBy === 'completed_at')
+                                    <span class="ml-1">{{ $sortDir === 'asc' ? '↑' : '↓' }}</span>
+                                @endif
+                            </th>
+                            <th class="px-3 py-3">Duration</th>
+                            <th class="px-3 py-3">Reviewed</th>
+                            <th class="px-3 py-3"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
+                        @foreach($attempts as $attempt)
+                            <tr wire:key="attempt-{{ $attempt->id }}" class="text-sm">
+                                <td class="px-3 py-3 font-medium text-zinc-900 dark:text-zinc-100">{{ $attempt->candidate_name }}</td>
+                                <td class="px-3 py-3 text-zinc-600 dark:text-zinc-400">{{ $attempt->candidate_email }}</td>
+                                <td class="px-3 py-3">
+                                    @if($attempt->status === 'submitted')
+                                        <flux:badge color="lime" size="sm">Submitted</flux:badge>
+                                    @else
+                                        <flux:badge color="amber" size="sm">In Progress</flux:badge>
+                                    @endif
+                                </td>
+                                <td class="px-3 py-3 text-zinc-600 dark:text-zinc-400">{{ $attempt->started_at?->format('M j, g:i A') }}</td>
+                                <td class="px-3 py-3 text-zinc-600 dark:text-zinc-400">{{ $attempt->completed_at?->format('M j, g:i A') ?? '-' }}</td>
+                                <td class="px-3 py-3 text-zinc-600 dark:text-zinc-400">
+                                    @if($attempt->duration_seconds)
+                                        {{ floor($attempt->duration_seconds / 60) }}m {{ $attempt->duration_seconds % 60 }}s
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td class="px-3 py-3">
+                                    @if($attempt->reviewed_at)
+                                        <svg class="size-5 text-lime-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                        </svg>
+                                    @else
+                                        <svg class="size-5 text-zinc-300 dark:text-zinc-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                        </svg>
+                                    @endif
+                                </td>
+                                <td class="px-3 py-3">
+                                    <flux:button href="{{ route('admin.attempts.show', $attempt) }}" size="sm" variant="ghost">
+                                        View
+                                    </flux:button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
 
             <div class="mt-6">
                 {{ $attempts->links() }}
             </div>
         @endif
-    </flux:card>
+    </x-card>
 </div>
