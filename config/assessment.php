@@ -4,6 +4,13 @@ return [
     'version' => '2025-12-11',
     'title' => 'Customer Support Lead — Assessment (Subscribr)',
 
+    'admin' => [
+        'username' => env('ASSESSMENT_ADMIN_USER', 'admin'),
+        'password' => env('ASSESSMENT_ADMIN_PASS'),
+    ],
+
+    'retention_days' => env('ASSESSMENT_RETENTION_DAYS', 180),
+
     'sections' => [
         [
             'key' => 'email_responses',
