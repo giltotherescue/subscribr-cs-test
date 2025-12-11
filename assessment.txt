@@ -1,0 +1,290 @@
+
+⸻
+
+INTERNAL SECTION – FOR YOU ONLY
+
+Goal of this assessment
+
+You want to test whether someone can actually do the real Customer Support Lead job at Subscribr:
+	•	Handle billing and account issues with grace
+	•	Support loyal but blocked users on hard technical problems
+	•	Debug issues using logs, code snippets, and the Help Center
+	•	Use AI tools intelligently
+	•	Structure and prioritize issues
+	•	Produce helpful documentation and help articles
+
+This assessment should:
+	•	Take about 60 to 75 minutes for a strong candidate
+	•	Be done asynchronously
+	•	Let you compare candidates side by side with a simple rubric
+
+How to run it
+	1.	Create a Google Doc or Notion page with the Candidate Assessment section below.
+	2.	Send candidates a link plus instructions:
+	•	Time expectation: about 60 minutes
+	•	Please do this in one sitting if possible
+	•	They may use the Subscribr Help Center but should not use AI tools for writing
+	3.	Ask them to:
+	•	Write their answers directly under each question, or
+	•	Make their own copy of the doc and send you the final version
+
+High level grading
+
+For each candidate, score from 1 to 5 on:
+	•	Writing and tone
+	•	Customer empathy
+	•	Technical reasoning
+	•	Debugging approach
+	•	Documentation quality
+	•	Prioritization and product sense
+	•	AI fluency
+
+You will quickly see who is strong overall. A great hire is mostly 4s and 5s.
+
+⸻
+
+CANDIDATE ASSESSMENT – CUSTOMER SUPPORT LEAD
+
+Subscribr
+
+Instructions
+
+Thank you for taking the time to complete this assessment.
+	•	Please answer directly in this document (or clearly under each question).
+	•	You can use the Subscribr Help Center at https://subscribr.ai/help.
+	•	Please do not use AI tools (ChatGPT, Claude, etc) to write your answers. We want to see your actual writing and thinking. You will use AI tools in this role, but for this assessment we need to understand your personal approach.
+	•	Total time should be around 60 to 75 minutes.
+
+There are 8 sections:
+	1.	Email responses
+	2.	Technical debugging from symptoms
+	3.	Debugging from logs
+	4.	Workflow analysis
+	5.	Code reading and AI assistance
+	6.	Live troubleshooting simulation
+	7.	Prioritization and grouping
+	8.	Help Center article and AI prompt
+
+Please answer as if you already worked at Subscribr and were trying to give the best possible help to a customer.
+
+⸻
+
+1. Email Responses
+
+1A. Angry billing and account issue
+A customer writes:
+
+“Hi, I cancelled my account last month but you still charged me. This is ridiculous. If this is not fixed right away I am going to dispute the charges with my bank.”
+
+Write the email response you would send as the Customer Support Lead at Subscribr.
+
+Write your answer below.
+
+⸻
+
+1B. Loyal but blocked technical user
+A long time customer writes:
+
+“Hey Gil, I love Subscribr and I rely on it for all my YouTube scripts. For the last two days, my scripts keep timing out halfway through and I cannot get a full script to save. I have a video scheduled for tomorrow and I am getting really stressed. Can you help?”
+
+Write the email response you would send.
+
+Write your answer below.
+
+⸻
+
+2. Technical Debugging From Symptoms
+
+You can reference https://subscribr.ai/help for this section.
+
+2A. Research limit issue
+A user reports:
+
+“When I try to upload research I get a message saying Research Limit Exceeded. My file only has about 9,500 words and my plan says I can have 50,000 words of research. Why is this happening and how do I fix it?”
+
+Question:
+
+Describe how you would diagnose and resolve this issue.
+
+Write your answer below.
+
+⸻
+
+2B. Short or cut off scripts
+A user says:
+
+“No matter what I do, the script stops early. I ask for a 2,000 word script and it stops around 900 to 1,000 words every time.”
+
+Question:
+
+What might be causing this? How would you investigate?
+
+Write your answer below.
+
+⸻
+
+3. Debugging From Logs
+
+You are given this log excerpt from a script generation job:
+
+[2025-12-02 14:53:09] production.ERROR:
+OpenAI API Error: RateLimitExceededException
+Model: gpt-5-large
+Job: GenerateScript
+User ID: 29193
+Script length requested: 3000 words
+Queue: high
+Trace: ScriptJobHandler.php:83
+
+3A. Explain what happened
+In your own words, explain what this log is telling you and what probably happened when the user tried to generate their script.
+
+3B. Next steps
+What would you do next to investigate and resolve this?
+
+Write your answers below.
+
+⸻
+
+4. Workflow Analysis
+
+Imagine a user flow where a creator:
+	•	Connects their YouTube channel
+	•	Imports existing videos
+	•	Adds research documents
+	•	Uses Script Bot to generate a new script
+	•	Saves the script and sends it to their editor
+
+Question:
+
+Where in this workflow might users get confused or stuck? What would you suggest to improve the experience?
+
+Write your answer below.
+
+⸻
+
+5. Code Reading and AI Assistance
+
+You do not need to be a full time developer for this role, but you will sometimes look at code or use AI tools to help understand what is happening.
+
+Below is a simple Laravel style function that handles research uploads:
+
+public function uploadResearch(Request $request)
+{
+    $user = Auth::user();
+
+    $file = $request->file('research');
+
+    if (! $file) {
+        return response()->json([
+            'error' => 'No file uploaded',
+        ], 400);
+    }
+
+    $content = $file->get();
+
+    if (strlen($content) > $user->research_limit) {
+        return response()->json([
+            'error' => 'Research limit exceeded',
+        ], 400);
+    }
+
+    ResearchItem::create([
+        'user_id' => $user->id,
+        'content' => $content,
+        'characters' => strlen($content),
+    ]);
+
+    return response()->json(['status' => 'ok']);
+}
+
+5A. Explain the code
+In your own words, explain what this function is doing.
+
+5B. Find possible problems
+What issues might this code cause for users?
+
+5C. Using AI to help
+How would you use AI tools to help you understand code like this in a support role?
+
+Write your answers below.
+
+⸻
+
+6. Live Troubleshooting Simulation
+
+Below is a mini conversation with a user. Pretend you are replying in a support inbox.
+
+You see this first message:
+	1.	
+
+“Your tool just says Generating forever and never finishes. I have been trying for 20 minutes. Please fix this.”
+
+You reply once.
+
+Then the user sends more information:
+	2.	
+
+“It actually works on my second channel, just not on my main channel with all my older videos.”
+
+You reply again.
+
+Then the user sends:
+	3.	
+
+“Here is a screenshot of the screen where it is stuck.”
+
+(You can imagine the screenshot shows the Subscribr script page with a spinning loader and no error message.)
+
+Task:
+
+Write the three replies you would send (one after each message).
+
+Write your answers below.
+
+⸻
+
+7. Prioritization and Grouping
+
+Below are ten short issue summaries that came in on the same day:
+	1.	“I got charged after my trial ended but I thought it was free.”
+	2.	“Channel Voice keeps giving me a voice that does not sound like my channel at all.”
+	3.	“Research upload says Research Limit Exceeded even on small files.”
+	4.	“I cannot find where to cancel my subscription.”
+	5.	“My script is stuck at Generating for more than 10 minutes.”
+	6.	“I would love if Subscribr could export scripts straight into Notion.”
+	7.	“My channel analytics look wrong. View counts are missing for some videos.”
+	8.	“I upgraded but still do not see the new features on my account.”
+	9.	“The email verification link does not work on mobile.”
+	10.	“I am not sure which plan is best for me. Can someone give me advice?”
+
+Task:
+
+How would you organize, prioritize, and handle these issues?
+
+Write your answer below.
+
+⸻
+
+8. Help Center Article and AI Prompt
+
+8A. Help Center article
+Many users get confused by how credits work in Subscribr and what actions use them.
+
+Write a short Help Center article titled "How Credits Work in Subscribr".
+
+Write your article below.
+
+⸻
+
+8B. AI prompt
+In your day-to-day work, you would use tools like ChatGPT or Claude to help draft help articles and internal docs.
+
+Write the prompt you would give to an AI tool to help you create a first draft of the Help Center article above.
+
+Write your prompt below.
+
+⸻
+
+End of assessment.
+Thank you for taking the time to work through this.
