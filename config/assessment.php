@@ -335,7 +335,7 @@ Below are ten short issue summaries that came in on the same day:
 9. "The email verification link does not work on mobile."
 10. "I am not sure which plan is best for me. Can someone give me advice?"
 
-How would you organize, prioritize, and handle these issues?
+How would you organize and prioritize these issues? Which would you handle first and why?
 PROMPT,
                     'required' => true,
                     'rows' => 14,
