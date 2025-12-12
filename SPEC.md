@@ -535,7 +535,7 @@ public function autosave(): void
 **Body:**
 Thanks for taking the time to complete this assessment.
 
-* Expected time: **60–75 minutes**
+* Expected time: **60 minutes**
 * Please do this in **one sitting if possible**
 * You may reference the Subscribr Help Center: [https://subscribr.ai/help](https://subscribr.ai/help)
 * You may use AI tools (ChatGPT, Claude, etc.) and web search as you normally would

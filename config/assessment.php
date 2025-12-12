@@ -186,7 +186,7 @@ PROMPT,
                     'key' => 's5_q5a_explain_code',
                     'title' => '5A. Explain the code',
                     'prompt' => <<<'PROMPT'
-Below is a simple Laravel style function that handles research uploads:
+Below is a simplified Laravel function that handles research uploads:
 
 public function uploadResearch(Request $request)
 {
@@ -197,6 +197,23 @@ public function uploadResearch(Request $request)
     if (! $file) {
         return response()->json([
             'error' => 'No file uploaded',
+        ], 400);
+    }
+
+    $allowedTypes = ['txt', 'pdf', 'doc', 'docx'];
+    $extension = strtolower($file->getClientOriginalExtension());
+
+    if (! in_array($extension, $allowedTypes)) {
+        return response()->json([
+            'error' => 'File type not supported',
+        ], 400);
+    }
+
+    $maxSize = 10 * 1024 * 1024; // 10MB
+
+    if ($file->getSize() > $maxSize) {
+        return response()->json([
+            'error' => 'File too large',
         ], 400);
     }
 
@@ -220,19 +237,12 @@ public function uploadResearch(Request $request)
 In your own words, explain what this function is doing.
 PROMPT,
                     'required' => true,
-                    'rows' => 8,
+                    'rows' => 10,
                 ],
                 [
                     'key' => 's5_q5b_find_problems',
                     'title' => '5B. Find possible problems',
                     'prompt' => 'What issues might this code cause for users?',
-                    'required' => true,
-                    'rows' => 8,
-                ],
-                [
-                    'key' => 's5_q5c_using_ai',
-                    'title' => '5C. Using AI to help',
-                    'prompt' => 'How would you use AI tools to help you understand code like this in a support role?',
                     'required' => true,
                     'rows' => 8,
                 ],
