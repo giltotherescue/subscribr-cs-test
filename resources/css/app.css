@@ -302,6 +302,14 @@ body {
 }
 
 /* Improve text contrast in dark mode */
+.dark .text-sand-900 {
+    color: #f0ece6;
+}
+
+.dark .text-sand-800 {
+    color: #e4ddd3;
+}
+
 .dark .text-sand-700 {
     color: #c9bfb0;
 }
