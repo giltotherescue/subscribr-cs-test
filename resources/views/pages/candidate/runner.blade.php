@@ -119,7 +119,7 @@ new #[Layout('components.layouts.app')] class extends Component {
         $this->attempt->forceFill([
             'status' => 'submitted',
             'completed_at' => $completedAt,
-            'duration_seconds' => $completedAt->diffInSeconds($this->attempt->started_at),
+            'duration_seconds' => max(0, (int) $this->attempt->started_at->diffInSeconds($completedAt, false)),
         ])->save();
 
         $this->redirect(route('attempt.done', $this->attempt->token), navigate: true);
