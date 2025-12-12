@@ -301,8 +301,30 @@ body {
     color: #f0ece6;
 }
 
+/* Improve text contrast in dark mode */
+.dark .text-sand-700 {
+    color: #c9bfb0;
+}
+
+.dark .text-sand-600 {
+    color: #b8ac9a;
+}
+
+.dark .text-sand-500 {
+    color: #a89b8a;
+}
+
 /* Footer styling */
 .assessment-footer {
     border-top: 1px solid var(--color-sand-200);
     background: linear-gradient(180deg, white 0%, var(--color-sand-50) 100%);
+}
+
+.dark .assessment-footer {
+    border-top: 1px solid #2d2b28;
+    background: linear-gradient(180deg, #1a1917 0%, #0f0e0d 100%);
+}
+
+.dark .assessment-footer p {
+    color: #a89b8a;
 }

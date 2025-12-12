@@ -295,6 +295,19 @@ PROMPT,
                     'required' => true,
                     'rows' => 8,
                 ],
+                [
+                    'key' => 's6_reply4',
+                    'title' => '6. Reply 4 (Public Discord)',
+                    'prompt' => <<<'PROMPT'
+A different user posts in your Discord #help channel (visible to ~500 community members):
+
+"Is anyone else having problems? Subscribr has been broken for me all day. Starting to regret paying for this."
+
+Write your public reply.
+PROMPT,
+                    'required' => true,
+                    'rows' => 8,
+                ],
             ],
         ],
 
