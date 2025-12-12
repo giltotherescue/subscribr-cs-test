@@ -100,7 +100,8 @@ new #[Layout('components.layouts.app')] class extends Component {
         }
 
         if (! empty($this->validationErrors)) {
-            $this->dispatch('validation-failed');
+            $firstErrorKey = array_key_first($this->validationErrors);
+            $this->dispatch('validation-failed', key: $firstErrorKey);
             return;
         }
 
@@ -164,6 +165,14 @@ new #[Layout('components.layouts.app')] class extends Component {
                 this.lastSavedAt = event.at;
                 this.saveError = false;
                 this.saving = false;
+            });
+
+            $wire.on('validation-failed', (event) => {
+                const el = document.getElementById('q-' + event.key);
+                if (el) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    el.focus();
+                }
             });
         },
 
