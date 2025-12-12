@@ -97,7 +97,7 @@ Write your answer below.
 
 You can reference https://subscribr.ai/help for this section.
 
-2A. Research limit issue
+2A. Script research issue
 A user reports:
 
 “When I try to upload research I get a message saying Research Limit Exceeded. My file only has about 9,500 words and my plan says I can have 50,000 words of research. Why is this happening and how do I fix it?”
