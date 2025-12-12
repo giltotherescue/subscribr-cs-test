@@ -8,10 +8,19 @@ use Livewire\Attributes\Layout;
 new #[Layout('components.layouts.app')] class extends Component {
     public Attempt $attempt;
     public array $answers = [];
-    public string $sessionId = '';
     public ?string $lastSavedAt = null;
-    public bool $showMultiTabWarning = false;
     public array $validationErrors = [];
+
+    /**
+     * Some tooling/browser logging can accidentally trigger `$wire.toJSON()` by attempting to
+     * serialize the Livewire proxy. Implementing this prevents autosave requests from failing.
+     *
+     * @return array<string, mixed>
+     */
+    public function toJSON(): array
+    {
+        return [];
+    }
 
     public function mount(string $token): void
     {
@@ -28,11 +37,6 @@ new #[Layout('components.layouts.app')] class extends Component {
         }
 
         $this->lastSavedAt = $this->attempt->last_activity_at?->toIso8601String();
-    }
-
-    public function setSessionId(string $sessionId): void
-    {
-        $this->sessionId = $sessionId;
     }
 
     public function autosave(): void
@@ -71,19 +75,8 @@ new #[Layout('components.layouts.app')] class extends Component {
             );
         }
 
-        // Check for multi-tab warning
-        $this->showMultiTabWarning = false;
-        if ($this->sessionId &&
-            $this->attempt->active_session_id &&
-            $this->attempt->active_session_id !== $this->sessionId &&
-            $this->attempt->active_session_updated_at?->isAfter(now()->subSeconds(60))) {
-            $this->showMultiTabWarning = true;
-        }
-
         $this->attempt->forceFill([
             'last_activity_at' => $now,
-            'active_session_id' => $this->sessionId ?: null,
-            'active_session_updated_at' => $now,
         ])->save();
 
         $this->lastSavedAt = $now->toIso8601String();
@@ -162,34 +155,46 @@ new #[Layout('components.layouts.app')] class extends Component {
         dirty: false,
         lastSavedAt: @js($lastSavedAt),
         saveError: false,
-        sessionId: localStorage.getItem('assessment_session_id') || null,
+        saving: false,
+        autosaveTimeoutId: null,
+        revision: 0,
 
-        generateUUID() {
-            if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-                return crypto.randomUUID();
-            }
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                const r = Math.random() * 16 | 0;
-                const v = c === 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
+        init() {
+            $wire.on('autosaved', (event) => {
+                this.lastSavedAt = event.at;
+                this.saveError = false;
+                this.saving = false;
             });
         },
 
-        init() {
-            if (!this.sessionId) {
-                this.sessionId = this.generateUUID();
-                localStorage.setItem('assessment_session_id', this.sessionId);
-            }
-            $wire.setSessionId(this.sessionId);
+        scheduleAutosave() {
+            this.dirty = true;
+            this.saveError = false;
+            this.revision++;
+            const revision = this.revision;
 
-            $wire.on('autosaved', (event) => {
-                this.lastSavedAt = event.at;
-                this.dirty = false;
-                this.saveError = false;
-            });
+            if (this.autosaveTimeoutId) {
+                clearTimeout(this.autosaveTimeoutId);
+            }
+
+            this.autosaveTimeoutId = setTimeout(() => {
+                this.saving = true;
+                $wire.autosave()
+                    .then(() => {
+                        if (revision === this.revision) {
+                            this.dirty = false;
+                        }
+                    })
+                    .catch(() => {
+                        this.saveError = true;
+                    })
+                    .finally(() => {
+                        this.saving = false;
+                    });
+            }, 1200);
         }
     }"
-    x-on:input="dirty = true"
+    x-on:input="scheduleAutosave()"
     wire:poll.15s="autosave"
 >
     @if($attempt->isSubmitted())
@@ -217,31 +222,21 @@ new #[Layout('components.layouts.app')] class extends Component {
                     <p class="text-sand-600 mt-2">{{ $attempt->candidate_name }} · {{ $attempt->candidate_email }}</p>
                 </div>
                 <div>
-                    <template x-if="dirty">
-                        <span class="save-badge save-badge-saving">
+                    <div wire:ignore class="flex items-center">
+                        <span x-cloak x-show="saveError" class="save-badge save-badge-error">
+                            Error saving
+                        </span>
+                        <span x-cloak x-show="!saveError && (saving || dirty)" class="save-badge save-badge-saving">
                             <span class="size-1.5 rounded-full bg-amber-500 pulse-dot"></span>
                             Saving...
                         </span>
-                    </template>
-                    <template x-if="!dirty && !saveError">
-                        <span class="save-badge save-badge-saved">
+                        <span x-cloak x-show="!saveError && !saving && !dirty" class="save-badge save-badge-saved">
                             <svg class="size-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
                             Saved
                         </span>
-                    </template>
-                    <template x-if="saveError">
-                        <span class="save-badge save-badge-error">
-                            Error saving
-                        </span>
-                    </template>
+                    </div>
                 </div>
             </div>
-
-            @if($showMultiTabWarning)
-                <div class="mt-4 p-3 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-800">
-                    <strong>Warning:</strong> This assessment is open in another tab.
-                </div>
-            @endif
 
             <p class="mt-4 text-sm text-sand-500">
                 Your work saves automatically. Bookmark this page if you need to take a break.
