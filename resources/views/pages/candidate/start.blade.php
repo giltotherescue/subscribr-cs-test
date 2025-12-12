@@ -50,7 +50,7 @@ new #[Layout('components.layouts.app')] class extends Component {
         <ul class="space-y-4">
             <li class="flex items-start gap-3">
                 <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-sm font-medium mt-0.5">1</span>
-                <span class="text-sand-700">Expected time: <strong class="text-sand-900">60–75 minutes</strong></span>
+                <span class="text-sand-700">Expected time: <strong class="text-sand-900">30-60 minutes</strong></span>
             </li>
             <li class="flex items-start gap-3">
                 <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center text-sm font-medium mt-0.5">2</span>

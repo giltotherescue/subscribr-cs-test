@@ -26,6 +26,8 @@ A customer writes:
 "Hi, I cancelled my account last month but you still charged me. This is ridiculous. If this is not fixed right away I am going to dispute the charges with my bank."
 
 Write the email response you would send as the Customer Support Lead at Subscribr.
+
+Note: Subscribr's policy is to always refund accidental or disputed charges like this.
 PROMPT,
                     'required' => true,
                     'rows' => 10,
@@ -53,7 +55,7 @@ PROMPT,
             'questions' => [
                 [
                     'key' => 's2_q2a_research_limit',
-                    'title' => '2A. Research limit issue',
+                    'title' => '2A. Script research issue',
                     'prompt' => <<<'PROMPT'
 A user reports:
 
@@ -65,14 +67,14 @@ PROMPT,
                     'rows' => 10,
                 ],
                 [
-                    'key' => 's2_q2b_short_scripts',
-                    'title' => '2B. Short or cut off scripts',
+                    'key' => 's2_q2b_wrong_language',
+                    'title' => '2B. Script in wrong language',
                     'prompt' => <<<'PROMPT'
 A user says:
 
-"No matter what I do, the script stops early. I ask for a 2,000 word script and it stops around 900 to 1,000 words every time."
+"My scripts keep coming out in Spanish even though my channel is in English. I've tried everything but it won't stop."
 
-What might be causing this? How would you investigate?
+How would you investigate and respond to the user?
 PROMPT,
                     'required' => true,
                     'rows' => 10,
